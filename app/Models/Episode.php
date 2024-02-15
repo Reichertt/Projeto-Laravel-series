@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Episode extends Model
 {
+    protected $casts = ['watched' => 'boolean'];
+    
     use HasFactory;
 
     // Indica para o BD que não será informado o timestamps

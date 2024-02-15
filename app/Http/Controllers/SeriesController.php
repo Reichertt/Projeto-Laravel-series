@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\Autenticador;
 use App\Http\Requests\SeriesFormRequest;
 use Illuminate\Http\Request;
 use App\Models\Series;
-use App\Models\Season;
-use App\Models\Episode;
+use App\Repositories\SeriesRepository;
 
 class SeriesController extends Controller
 {
+    // Método utilizando inversão de dependência 
+    public function __construct(private SeriesRepository $repository)
+    {
+        $this->middleware(Autenticador::class)->except('index');
+    }
+
     // Trás todas as series do BD
     public function index(Request $request)
     {
@@ -20,7 +26,7 @@ class SeriesController extends Controller
         // return view('listar-series', compact('series'));
     }
 
-    public function create() 
+    public function create()
     {
         return view('series.create');
     }
@@ -28,30 +34,11 @@ class SeriesController extends Controller
     // Salva os dados no BD
     public function store(SeriesFormRequest $request)
     {
-        $serie = Series::create($request->all());
-        $seasons = [];
+        $serie = $this->repository->add($request);
 
-        for ($i = 1; $i <= $request->seasonsQty; $i++) {
-            $seasons[] = [
-                'series_id' => $serie->id,
-                'number' => $i
-            ];
-        }
-        Season::insert($seasons);
-
-        $episodes = [];
-        foreach ($serie->seasons as $season) {
-            for ($j = 1; $j <= $request->episodesPerSeason; $j++) {
-                $episodes[] = [
-                    'season_id' => $season->id,
-                    'number'    => $j 
-                ];
-            }
-        }
-        Episode::insert($episodes);
-
-        // Caso a requicisão tenha o status de sucesso, mostra a mensagem
+         // Caso a requicisão tenha o status de sucesso, mostra a mensagem
         return to_route('series.index')->with('mensagem.sucesso', "Série '{$serie->nome}' adicionada com sucesso");
+        
     }
 
     // remove os dados no BD

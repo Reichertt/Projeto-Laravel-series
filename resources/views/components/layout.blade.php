@@ -11,8 +11,23 @@
 </head>
 
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-black">
+        <div class="container-fluid">
+            <a class="navbar-brand text-light" href="{{ route('series.index')}}">Home</a>
+            @auth
+                <a href="{{ route('logout')}}">Sair</a>
+            @endauth
+        </div>
+    </nav>
     <div class="container">
         <h1>{{ $title}}</h1>
+
+        <!-- Mensagem de sucesso-->
+        @isset($mensagemSucesso)
+        <div class="alert alert-success">
+            {{ $mensagemSucesso }}
+        </div>
+        @endisset
 
         <!-- Mensagen de erro feito diretamente pelo Laravel-->
         @if ($errors->any())

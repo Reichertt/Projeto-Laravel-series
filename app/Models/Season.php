@@ -21,4 +21,12 @@ class Season extends Model
         // "hasMany" Defini um relacionamento de um para muitos
         return $this->hasMany(Episode::class);   
     }
+
+    // Dos episódios daquela determinada temporada, trás os marcados como assistidos
+    public function numberOfWatchedEpisodes(): int
+    {
+        return $this->episodes
+            ->filter(fn ($episode) =>$episode->watched)
+            ->count();
+    }
 }
